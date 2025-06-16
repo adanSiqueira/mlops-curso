@@ -7,5 +7,5 @@ steps:
       '-t', '$_IMAGE_TAG',
       '.'
     ]
-    images:
-      - $_IMAGE_TAG
+images:
+  - $_IMAGE_TAG
