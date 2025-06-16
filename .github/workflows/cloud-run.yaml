@@ -65,7 +65,8 @@ jobs:
           image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
 
       - name: Show Cloud Run URL
-        run: echo "App URL: ${{ steps.deploy.outputs.url }}"
+        run: |
+          echo "App URL: ${{ steps.deploy.outputs.url }}"
 
 
 # Coisas que você precisa configurar:
