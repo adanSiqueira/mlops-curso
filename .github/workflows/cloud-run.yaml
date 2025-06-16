@@ -1,0 +1,88 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # ou outro branch principal, como 'master'
+
+env:
+  PROJECT_ID: nomadic-basis-462802-b7
+  SERVICE: ml-api
+  REGION: us-central1  # ou europe-west1, se você quiser manter o que já usava
+  BASIC_AUTH_USERNAME: ${{ secrets.BASIC_AUTH_USERNAME }}
+  BASIC_AUTH_PASSWORD: ${{ secrets.BASIC_AUTH_PASSWORD }}
+
+jobs:
+  deploy:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v0'
+        with:
+          # token_format: 'access_token'
+          # workload_identity_provider: '${{ vars.WIF_PROVIDER }}'
+          # service_account: '${{ vars.WIF_SERVICE_ACCOUNT }}'
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Docker Auth to Google Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: gcr.io
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      # - name: Build and Push Docker image to GCR
+      #   run: |
+      #     docker build \
+      #       --build-arg BASIC_AUTH_USERNAME_ARG=${{ env.BASIC_AUTH_USERNAME }} \
+      #       --build-arg BASIC_AUTH_PASSWORD_ARG=${{ env.BASIC_AUTH_PASSWORD }} \
+      #       -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }} .
+
+      #     docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
+      - name: Trigger Cloud Build
+        run: |
+          gcloud builds submit \
+            --quiet \
+            --config=cloudbuild.yaml \
+            --substitutions=_BASIC_AUTH_USERNAME_ARG=${{ env.BASIC_AUTH_USERNAME }},_BASIC_AUTH_PASSWORD_ARG=${{ env.BASIC_AUTH_PASSWORD }},_IMAGE_TAG=gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
+
+      - name: Show Cloud Run URL
+        run: echo "App URL: ${{ steps.deploy.outputs.url }}"
+
+
+# Coisas que você precisa configurar:
+# Secrets do repositório:
+
+# BASIC_AUTH_USERNAME
+
+# BASIC_AUTH_PASSWORD
+
+# WIF_PROVIDER
+
+# WIF_SERVICE_ACCOUNT
+
+# Nome do branch:
+
+# Troque main por outro se for diferente no seu repositório.
+
+# Região (REGION):
+
+# Você usou europe-west1 antes, mas no deploy manual não especificou.
+
+# Use a mesma região que criou o serviço no Cloud Run.
