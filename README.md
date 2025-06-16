@@ -4,7 +4,19 @@
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
 </a>
 
-mlops-deploy-curso
+This project sets up a CI/CD pipeline that automates the deployment of a Dockerized application to Google Cloud Run using GitHub Actions and Google Cloud Build.
+
+The pipeline is triggered by any push to the main branch and performs the following automated steps:
+
+Authenticates with Google Cloud using a service account or Workload Identity Federation.
+
+Builds a Docker image using the cloudbuild.yaml configuration.
+
+Pushes the image to Google Container Registry (GCR) or Artifact Registry.
+
+Deploys the image to Cloud Run, making the latest code available in production automatically.
+
+This setup enables automatic deployments to production on every commit to main, streamlining the release process and reducing the need for manual intervention.
 
 ## Project Organization
 
