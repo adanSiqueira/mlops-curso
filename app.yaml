@@ -1,0 +1,13 @@
+##--versao que funcionou
+runtime: python313
+entrypoint: gunicorn -b :$PORT main:app
+
+handlers:
+- url: /.*
+  script: auto
+
+# env_variables:
+#   BASIC_AUTH_USERNAME: adan
+#   BASIC_AUTH_PASSWORD: adan
+includes:
+- env_vars.yaml

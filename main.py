@@ -9,18 +9,18 @@ from textblob import TextBlob
 from googletrans import Translator
 from models.house_prices_model import Model 
 
-load_dotenv()
+# load_dotenv()
 modelo = Model()
 
 app = Flask(__name__)
 
-app.config['BASIC_AUTH_USERNAME'] = os.getenv('BASIC_AUTH_USERNAME')
-app.config['BASIC_AUTH_PASSWORD'] = os.getenv('BASIC_AUTH_PASSWORD')
+# app.config['BASIC_AUTH_USERNAME'] = os.getenv('BASIC_AUTH_USERNAME')
+# app.config['BASIC_AUTH_PASSWORD'] = os.getenv('BASIC_AUTH_PASSWORD')
 basic_auth = BasicAuth(app)
 
 @app.route('/')
 def home():
-    return "Minha primeira API."
+    return "API rodando em Python 3.11"
 
 # @app.route('/sentimento/<frase>')
 # async def translator(frase):
