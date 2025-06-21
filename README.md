@@ -1,9 +1,5 @@
 # mlops-deploy
 
-<a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
-    <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
-</a>
-
 This project sets up a CI/CD pipeline that automates the deployment of a Dockerized application to Google Cloud Run using GitHub Actions and Google Cloud Build.
 
 The pipeline is triggered by any push to the main branch and performs the following automated steps:
